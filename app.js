@@ -4,6 +4,7 @@ const url = require('url');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { use } = require('react');
 
 const app = express();  // manages the request and response fields (get, post etc.)
 app.use(cors());   // cross-origin resource sharing - makes sure server can be accessible from different domains
@@ -15,14 +16,27 @@ let users = {};
 
 
 // Route to get data
-
+app.post('/check', (req,res) =>{
+    const {user,password} = req.body;
+    console.log(req.body,"first-one")
+    
+         if(users[user] === password){
+             res.json({message:"Logged In Successfully"})
+         }
+        else{
+            res.json({message:"Username or Password incorrect, try different username or password"})
+        }
+    
+})
 
 // Route to add the sign-up details
 app.post('/add', (req,res) =>{
-    const {user,pwd } = req.body;
-    if(user){
-        users[user] = pwd; // Add details to object
-        res.json({message:'Details added'})
+    const {user,password} = req.body;
+    console.log(req.body);
+    if(user && password){
+        users[user] = password; // Add details to object
+        console.log("Updated object",users)
+        res.json(users)
     }
     else{
         res.status(400).json({message:'Details are required'});
