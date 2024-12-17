@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import './App.css'
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.css'
+import {Forms} from './register.jsx'
 
 function Input(props){
 const ref1 = useRef('');
@@ -10,47 +11,6 @@ let ref3 = useRef("");
 let [user, setUser] = useState('');
 let [pwd, setPwd] = useState('');
 let [output, setOutput] = useState('');
-const handleClick = async () => {
-  let obj = {};
-  let user = ref1.current.value;
-  let pwd = ref2.current.value;
-  console.log(user,pwd)
-
-  // Before storing the form input details, make sure both fields has no undefined value.
-  if(!user || !pwd){
-    alert("Both username and password are required");
-    return;
-  }
-
-  obj["user"] = user;
-  obj["password"] = pwd;
-
- try{     // When fetching data from server always use try catch to show success fetch and error details as well.
-
-  if(user && pwd){
-    const response = await fetch('http://localhost:3002/add', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(obj),
-    });
-
-    const data = await response.json();
-    console.log(data)
-    if(data.message === 'Details added') {
-      ref1.current.value = "";
-      ref2.current.value = "";
-      setOutput("Account Created!");
-      // obj.keys(ob).forEach(key => delete ob[key]);
-      console.log(data)
-    }
-  }
-}
-catch(error){
-  console.log("Error:", error);
-  alert("An error occured while adding details.");
-}
-
-}
 
 const checkPassword = async () => {
   let obj = {};
@@ -86,28 +46,54 @@ catch(error){
 }
 }
 
+function showComponent(){
+    props.onClick(true,false);
+}
+
   return(
     <>
-   <p>Username</p>
-   <input type="text" ref={ref1}/>
-   <p>Password</p>
-   <input type="text" ref={ref2}/>
-   <button className='mt-4 btn row btn-secondary justify-content-center' onClick={handleClick}>Register</button>
-   <button className='m-5 btn row btn-primary' onClick={checkPassword}>Login</button>
+  <form action="">
+  <div className='form-group'>
+   <p className='mt-5 fs-5'>Username</p>
+   <input type="text" ref={ref1} className='form-control'/>
+   <p className='mt-5 fs-5'>Password</p>
+   <input type="password" ref={ref2} className='form-control'/>
+   <button className='mt-5 btn btn-primary col-12' onClick={checkPassword}>Login</button>
+   <p className='mt-4'>Don't have an account?&nbsp;<a href="#" onClick={showComponent} className='text-danger'>Register</a> here.</p>
    <p ref={ref3}>{output}</p>
+   </div>
+   </form>
     </>
   )
 }
 
 
 
+function Logo(){
+  return(
+    <>
+    <div className='bg-danger logo'>
+    </div>
+    </>
+  )
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+
+let [login, showLogin] = useState(true);
+let [register,showRegister] = useState(false);
+
+  function makeTrue(value1,value2){
+    showRegister(value1);
+    showLogin(value2);
+  }
 
   return (
     <>
-    <h1>Sign-up</h1>
-      <Input />
+    <Logo/>
+    <h1 className='display-6 text-success text-center'>Deez-Spice</h1>
+    {login && <Input onClick={makeTrue}/>}
+    {register && <Forms onClick={makeTrue}/>}
     </>
   )
 }
